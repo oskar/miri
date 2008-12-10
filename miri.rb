@@ -46,5 +46,15 @@ module Miri
       puts msg
     end
   end
+  
+  # class Application < Thread
+  #   def initialize(options = {}, &block)
+  #     super block
+  #     Thread.new do
+  #       Thread.current['name'] = options['name']
+  #       yield block
+  #     end
+  #   end
+  # end
 
 end

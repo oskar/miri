@@ -9,7 +9,7 @@ a = Thread.new do
     Miri::send(sig, "b")
     
     sig = Miri::receive()
-    sleep(1)
+    sleep(2)
   end
 end
 
@@ -22,5 +22,14 @@ b = Thread.new do
     Miri::send(sig, "a")
   end
 end
+
+# c = Miri::Application.new :name => "c" do
+#   loop do
+#     log("Hi, im C!")
+#     sleep(3)
+#   end
+# end
+# 
+# puts Thread.list.to_s
 
 a.join
