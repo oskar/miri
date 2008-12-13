@@ -1,35 +1,25 @@
 require 'miri'
 
-a = Thread.new do
-  Thread.current['name'] = "a"
-  
-  Miri::need("b")
+a = Miri::Application.new :name => "a", :need => "b" do
   loop do
-    sig = "From A to B"
-    Miri::send(sig, "b")
-    
+    Miri::send("From A to B", "b")
     sig = Miri::receive()
     sleep(2)
   end
 end
 
-b = Thread.new do
-  Thread.current['name'] = "b"
+b = Miri::Application.new :name => "b" do
   loop do
     sig = Miri::receive()
-
-    sig = "From B to A"
-    Miri::send(sig, "a")
+    Miri::send("From B to A", "a")
   end
 end
 
-# c = Miri::Application.new :name => "c" do
-#   loop do
-#     log("Hi, im C!")
-#     sleep(3)
-#   end
-# end
-# 
-# puts Thread.list.to_s
+c = Miri::Application.new :name => "c", :need => ["a", "b"] do
+  loop do
+    Miri::log("Im C!")
+    sleep(1)
+  end
+end
 
 a.join

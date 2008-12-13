@@ -9,10 +9,13 @@ module Miri
     return nil
   end
 
-  def self.need(name)
-    loop do
-      return if find(name)
-      Thread.pass
+  def self.need(names)
+    names = names.to_a unless names.is_a?(Array)
+    names.each do |name|
+      loop do
+        break if find(name)
+        Thread.pass
+      end
     end
   end
 
@@ -47,14 +50,18 @@ module Miri
     end
   end
   
-  # class Application < Thread
-  #   def initialize(options = {}, &block)
-  #     super block
-  #     Thread.new do
-  #       Thread.current['name'] = options['name']
-  #       yield block
-  #     end
-  #   end
-  # end
+  class Application
+    def initialize(options = {}, &block)
+      @t = Thread.new do
+        Thread.current['name'] = options[:name]
+        Miri::need(options[:need]) if options[:need]
+        yield block
+      end
+    end
+    
+    def join
+      @t.join
+    end
+  end
 
 end
